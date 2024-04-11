@@ -1,5 +1,6 @@
 import numpy as np
 from enum import Enum
+from ai.easy_ai import EasyAi
 
 GRID_SIZE = 3
 
@@ -11,27 +12,10 @@ class GameState(Enum):
     O_WIN = "O wins"
 
 
-def get_initial_state():
-    cells = input("Enter the cells: ")
-    cells = cells.replace("_", " ")
-    cells = np.array(list(cells))
-    assert len(cells) == 9, "Input must contain exactly 9 elements"
-
-    x_count = 0
-    o_count = 0
-    for cell in cells:
-        assert cell in ["X", "O", " "], "Input must contain only symbols 'X', 'O' and '_'"
-        if cell == "X":
-            x_count += 1
-        elif cell == "O":
-            o_count += 1
-    x_o_difference = x_count - o_count
-    assert 0 <= x_o_difference <= 1, "Difference between 'X' and 'O' symbols cannot be larger than 1"
-
-    return cells.reshape(GRID_SIZE, GRID_SIZE), x_o_difference
-
-
 def validate_coordinates(grid, coordinates):
+    if len(coordinates) != 2:
+        print("Coordinates should contain exactly 2 numbers")
+        return False
     height_index = coordinates[0]
     width_index = coordinates[1]
     if height_index not in range(1, 4) or width_index not in range(1, 4):
@@ -55,9 +39,9 @@ def print_game_grid(game_grid):
 
 def check_game_state(grid):
     for i in range(GRID_SIZE):
-        if np.all(grid[i, :] == "X"):
+        if np.all(grid[i, :] == "X") or np.all(grid[:, i] == "X"):
             return GameState.X_WIN
-        elif np.all(grid[i, :] == "O"):
+        elif np.all(grid[i, :] == "O") or np.all(grid[:, i] == "O"):
             return GameState.O_WIN
 
     if np.all(grid.diagonal() == "X") or np.all(np.fliplr(grid).diagonal() == "X"):
@@ -72,24 +56,30 @@ def check_game_state(grid):
 
 
 def play_game():
-    game_grid, o_turn = get_initial_state()
+    game_grid = np.full((GRID_SIZE, GRID_SIZE), " ")
+    x_turn = True
     print_game_grid(game_grid)
-    game_state = check_game_state(game_grid)
+    game_state = GameState.CONTINUE
+
+    ai_player = EasyAi()
 
     while game_state == GameState.CONTINUE:
 
-        coordinates = input("Enter the coordinates: ")
-        try:
-            coordinates = [int(coordinate) for coordinate in coordinates.split(" ")]
-        except ValueError:
-            print("You should enter numbers!")
-            continue
+        if x_turn:
+            coordinates = input("Enter the coordinates: ")
+            try:
+                coordinates = [int(coordinate) for coordinate in coordinates.split(" ")]
+            except ValueError:
+                print("You should enter numbers!")
+                continue
 
-        if not validate_coordinates(game_grid, coordinates):
-            continue
+            if not validate_coordinates(game_grid, coordinates):
+                continue
+        else:
+            coordinates = ai_player.determine_move(game_grid)
 
-        game_grid[coordinates[0]-1][coordinates[1]-1] = "O" if o_turn else "X"
-        o_turn = not o_turn
+        game_grid[coordinates[0]-1][coordinates[1]-1] = "X" if x_turn else "O"
+        x_turn = not x_turn
 
         print_game_grid(game_grid)
         game_state = check_game_state(game_grid)
@@ -97,4 +87,5 @@ def play_game():
     print(game_state.value)
 
 
-play_game()
+if __name__ == '__main__':
+    play_game()
