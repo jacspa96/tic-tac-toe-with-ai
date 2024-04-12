@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class BaseAi(ABC):
+class BasePlayer(ABC):
 
     @abstractmethod
     def determine_move(self, grid):
