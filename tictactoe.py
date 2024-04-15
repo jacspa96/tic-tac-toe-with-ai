@@ -1,35 +1,11 @@
 import numpy as np
-from enum import Enum
-from utils import GameState, print_game_grid
+from utils import GameState, print_game_grid, check_game_state
 from players.human_player import HumanPlayer
 from players.easy_ai_player import EasyAiPlayer
 from players.medium_ai_player import MediumAiPlayer
+from players.hard_ai_player import HardAiPlayer
 
 GRID_SIZE = 3
-AVAILABLE_COMMANDS = {"start", "easy "}
-
-
-class PlayerType(Enum):
-    HUMAN = "human",
-    EASY_AI = "easy"
-
-
-def check_game_state(grid):
-    for i in range(GRID_SIZE):
-        if np.all(grid[i, :] == "X") or np.all(grid[:, i] == "X"):
-            return GameState.X_WIN
-        elif np.all(grid[i, :] == "O") or np.all(grid[:, i] == "O"):
-            return GameState.O_WIN
-
-    if np.all(grid.diagonal() == "X") or np.all(np.fliplr(grid).diagonal() == "X"):
-        return GameState.X_WIN
-    elif np.all(grid.diagonal() == "O") or np.all(np.fliplr(grid).diagonal() == "O"):
-        return GameState.O_WIN
-
-    if np.any(grid == " "):
-        return GameState.CONTINUE
-    else:
-        return GameState.DRAW
 
 
 def game_setup():
@@ -45,8 +21,8 @@ def game_setup():
 
         if commands[0] == "start":
             try:
-                x_player = _determine_player(commands[1])
-                o_player = _determine_player(commands[2])
+                x_player = _determine_player(commands[1], "X")
+                o_player = _determine_player(commands[2], "O")
                 return False, x_player, o_player
             except ValueError:
                 print("Bad parameters!")
@@ -56,13 +32,15 @@ def game_setup():
             print("Bad parameters!")
 
 
-def _determine_player(player_type):
+def _determine_player(player_type, symbol):
     if player_type == "user":
         return HumanPlayer()
     elif player_type == "easy":
         return EasyAiPlayer()
     elif player_type == "medium":
         return MediumAiPlayer()
+    elif player_type == "hard":
+        return HardAiPlayer(symbol)
     raise ValueError(f"Unrecognized player type {player_type}")
 
 

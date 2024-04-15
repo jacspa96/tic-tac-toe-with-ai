@@ -1,4 +1,5 @@
 from enum import Enum
+import numpy as np
 import random
 
 
@@ -36,6 +37,11 @@ def validate_coordinates(grid, coordinates):
 
 
 def find_random_move(grid):
+    available_cells = find_available_cells(grid)
+    return random.choice(available_cells)
+
+
+def find_available_cells(grid):
     available_cells = []
     (height, width) = grid.shape
     for i in range(height):
@@ -43,4 +49,23 @@ def find_random_move(grid):
             if grid[i, j] == " ":
                 available_cells.append((i, j))
     assert available_cells, "No available moves for AI player"
-    return random.choice(available_cells)
+    return available_cells
+
+
+def check_game_state(grid):
+    grid_size = len(grid)
+    for i in range(grid_size):
+        if np.all(grid[i, :] == "X") or np.all(grid[:, i] == "X"):
+            return GameState.X_WIN
+        elif np.all(grid[i, :] == "O") or np.all(grid[:, i] == "O"):
+            return GameState.O_WIN
+
+    if np.all(grid.diagonal() == "X") or np.all(np.fliplr(grid).diagonal() == "X"):
+        return GameState.X_WIN
+    elif np.all(grid.diagonal() == "O") or np.all(np.fliplr(grid).diagonal() == "O"):
+        return GameState.O_WIN
+
+    if np.any(grid == " "):
+        return GameState.CONTINUE
+    else:
+        return GameState.DRAW
