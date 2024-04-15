@@ -4,7 +4,7 @@ from utils import validate_coordinates
 
 class HumanPlayer(BasePlayer):
 
-    def determine_move(self, grid):
+    def determine_move(self, grid, symbol=None):
         while True:
             coordinates = input("Enter the coordinates: ")
             try:
@@ -14,4 +14,4 @@ class HumanPlayer(BasePlayer):
                 continue
 
             if validate_coordinates(grid, coordinates):
-                return coordinates
+                return coordinates[0] - 1, coordinates[1] - 1

@@ -1,4 +1,5 @@
 from enum import Enum
+import random
 
 
 class GameState(Enum):
@@ -32,3 +33,14 @@ def validate_coordinates(grid, coordinates):
         print("This cell is occupied! Choose another one!")
         return False
     return True
+
+
+def find_random_move(grid):
+    available_cells = []
+    (height, width) = grid.shape
+    for i in range(height):
+        for j in range(width):
+            if grid[i, j] == " ":
+                available_cells.append((i, j))
+    assert available_cells, "No available moves for AI player"
+    return random.choice(available_cells)

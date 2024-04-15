@@ -4,6 +4,6 @@ from abc import ABC, abstractmethod
 class BasePlayer(ABC):
 
     @abstractmethod
-    def determine_move(self, grid):
+    def determine_move(self, grid, symbol):
         pass
         

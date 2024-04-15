@@ -3,6 +3,7 @@ from enum import Enum
 from utils import GameState, print_game_grid
 from players.human_player import HumanPlayer
 from players.easy_ai_player import EasyAiPlayer
+from players.medium_ai_player import MediumAiPlayer
 
 GRID_SIZE = 3
 AVAILABLE_COMMANDS = {"start", "easy "}
@@ -60,6 +61,8 @@ def _determine_player(player_type):
         return HumanPlayer()
     elif player_type == "easy":
         return EasyAiPlayer()
+    elif player_type == "medium":
+        return MediumAiPlayer()
     raise ValueError(f"Unrecognized player type {player_type}")
 
 
@@ -74,12 +77,13 @@ def play_game():
 
     while game_state == GameState.CONTINUE:
 
+        symbol = "X" if x_turn else "O"
         if x_turn:
-            coordinates = x_player.determine_move(game_grid)
+            coordinates = x_player.determine_move(game_grid, symbol)
         else:
-            coordinates = o_player.determine_move(game_grid)
+            coordinates = o_player.determine_move(game_grid, symbol)
 
-        game_grid[coordinates[0]-1][coordinates[1]-1] = "X" if x_turn else "O"
+        game_grid[coordinates[0]][coordinates[1]] = "X" if x_turn else "O"
         x_turn = not x_turn
 
         print_game_grid(game_grid)
