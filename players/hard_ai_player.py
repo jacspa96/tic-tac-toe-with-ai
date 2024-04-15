@@ -4,12 +4,9 @@ from utils import GameState, check_game_state, find_available_cells
 
 class HardAiPlayer(BasePlayer):
 
-    def __init__(self, symbol):
-        self.symbol = symbol
-
-    def determine_move(self, grid, symbol):
+    def determine_move(self, grid):
         print('Making move level "hard"')
-        return self._find_best_move(grid, symbol, True)[0]
+        return self._find_best_move(grid, self.symbol, True)[0]
 
     def _evaluate_value_of_game_state(self, state):
         if state == GameState.X_WIN:
@@ -33,12 +30,15 @@ class HardAiPlayer(BasePlayer):
         for move in available_cells:
             grid[move] = symbol
             moves.append(move)
+            # Ignore returned move, as we are only interested with the score.
+            # We need move only for the final return to 'determine_move' function,
+            # but this is the current move.
             score = self._find_best_move(grid, opposite_symbol, not ai_turn)[1]
             grid[move] = " "
+            # Tweak to speed up early minimax:
+            # If we find value that we know to be max/min, no need to look further
             if (ai_turn and score == 10) or (not ai_turn and score == -10):
                 return move, score
-            # Ignore returned move, as we are only interested with the score for move
-            # we have just done
             scores.append(score)
         if ai_turn:
             move_index = scores.index(max(scores))

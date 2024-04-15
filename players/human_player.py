@@ -4,7 +4,10 @@ from utils import validate_coordinates
 
 class HumanPlayer(BasePlayer):
 
-    def determine_move(self, grid, symbol=None):
+    def __init__(self, symbol=None):
+        super().__init__(symbol)
+
+    def determine_move(self, grid):
         while True:
             coordinates = input("Enter the coordinates: ")
             try:

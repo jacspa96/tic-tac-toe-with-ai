@@ -38,7 +38,7 @@ def _determine_player(player_type, symbol):
     elif player_type == "easy":
         return EasyAiPlayer()
     elif player_type == "medium":
-        return MediumAiPlayer()
+        return MediumAiPlayer(symbol)
     elif player_type == "hard":
         return HardAiPlayer(symbol)
     raise ValueError(f"Unrecognized player type {player_type}")
@@ -55,11 +55,10 @@ def play_game():
 
     while game_state == GameState.CONTINUE:
 
-        symbol = "X" if x_turn else "O"
         if x_turn:
-            coordinates = x_player.determine_move(game_grid, symbol)
+            coordinates = x_player.determine_move(game_grid)
         else:
-            coordinates = o_player.determine_move(game_grid, symbol)
+            coordinates = o_player.determine_move(game_grid)
 
         game_grid[coordinates[0]][coordinates[1]] = "X" if x_turn else "O"
         x_turn = not x_turn

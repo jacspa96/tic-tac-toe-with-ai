@@ -5,15 +5,15 @@ import numpy as np
 
 class MediumAiPlayer(BasePlayer):
 
-    def determine_move(self, grid, symbol):
+    def determine_move(self, grid):
         print('Making move level "medium"')
-        opposite_symbol = "X" if symbol == "O" else "O"
+        opposite_symbol = "X" if self.symbol == "O" else "O"
         # First look for possible win
-        candidate_coordinates = _find_winning_move_for_symbol(grid, symbol, opposite_symbol)
+        candidate_coordinates = _find_winning_move_for_symbol(grid, self.symbol, opposite_symbol)
         if candidate_coordinates is not None:
             return candidate_coordinates
         # Then look for blocking the opponent
-        candidate_coordinates = _find_winning_move_for_symbol(grid, opposite_symbol, symbol)
+        candidate_coordinates = _find_winning_move_for_symbol(grid, opposite_symbol, self.symbol)
         if candidate_coordinates is not None:
             return candidate_coordinates
         # Otherwise make a random move
